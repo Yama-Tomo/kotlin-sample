@@ -2,8 +2,8 @@ package com.yamatomo.cleanarch.usecase
 
 /**
  この層の役割
-  - interface_adpterからいい感じのデータが渡って来るので要件を満たす処理を実行
-    - 要件を満たす過程で永続化さされたデータへのアクセスが必要な場合はDIPしたインターフェース越しにinterface_adpterへ移譲
+  - interface_adapterからいい感じのデータが渡って来るので要件を満たす処理を実行
+    - 要件を満たす過程で永続化さされたデータへのアクセスが必要な場合はDIPしたインターフェース越しにinterface_adapterへ移譲
 **/
 
 import com.yamatomo.cleanarch.domain.User

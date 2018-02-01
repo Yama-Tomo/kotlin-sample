@@ -9,12 +9,12 @@ import com.yamatomo.cleanarch.domain.Branch
 import com.yamatomo.cleanarch.usecase.BranchInteractor
 import com.yamatomo.cleanarch.usecase.UserInteractor
 import com.yamatomo.cleanarch.usecase.context.Context
-import com.yamatomo.cleanarch.interface_adpter.controller.BranchController
-import com.yamatomo.cleanarch.interface_adpter.presenter.BranchPresenter
-import com.yamatomo.cleanarch.interface_adpter.presenter.UserPresenter
-import com.yamatomo.cleanarch.interface_adpter.repository.BranchRepository
+import com.yamatomo.cleanarch.interface_adapter.controller.BranchController
+import com.yamatomo.cleanarch.interface_adapter.presenter.BranchPresenter
+import com.yamatomo.cleanarch.interface_adapter.presenter.UserPresenter
+import com.yamatomo.cleanarch.interface_adapter.repository.BranchRepository
 import com.yamatomo.cleanarch.infrastructure.database.Branch as BranchDataGateway
-import com.yamatomo.cleanarch.interface_adpter.repository.UserRepository
+import com.yamatomo.cleanarch.interface_adapter.repository.UserRepository
 import com.yamatomo.cleanarch.infrastructure.database.User as UserDataGateway
 
 @RestController

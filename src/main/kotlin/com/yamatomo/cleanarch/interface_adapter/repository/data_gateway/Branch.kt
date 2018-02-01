@@ -1,4 +1,4 @@
-package com.yamatomo.cleanarch.interface_adpter.repository.data_gateway
+package com.yamatomo.cleanarch.interface_adapter.repository.data_gateway
 
 import com.yamatomo.cleanarch.domain.Branch as BranchEntity
 

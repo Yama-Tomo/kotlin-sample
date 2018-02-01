@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import com.yamatomo.cleanarch.domain.User
 import com.yamatomo.cleanarch.usecase.UserInteractor
 import com.yamatomo.cleanarch.usecase.context.Context
-import com.yamatomo.cleanarch.interface_adpter.controller.UserController
-import com.yamatomo.cleanarch.interface_adpter.presenter.UserPresenter
-import com.yamatomo.cleanarch.interface_adpter.repository.UserRepository
+import com.yamatomo.cleanarch.interface_adapter.controller.UserController
+import com.yamatomo.cleanarch.interface_adapter.presenter.UserPresenter
+import com.yamatomo.cleanarch.interface_adapter.repository.UserRepository
 import com.yamatomo.cleanarch.infrastructure.database.User as UserDataGateway
 
 @RestController

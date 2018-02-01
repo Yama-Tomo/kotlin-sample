@@ -1,4 +1,4 @@
-package com.yamatomo.cleanarch.interface_adpter.controller
+package com.yamatomo.cleanarch.interface_adapter.controller
 
 /**
  このレイヤの役割
@@ -14,7 +14,7 @@ import com.yamatomo.cleanarch.domain.User
 import com.yamatomo.cleanarch.usecase.exception.*
 import com.yamatomo.cleanarch.usecase.UserInteractor
 import com.yamatomo.cleanarch.usecase.context.Context
-import com.yamatomo.cleanarch.interface_adpter.presenter.UserPresenter
+import com.yamatomo.cleanarch.interface_adapter.presenter.UserPresenter
 
 class UserController constructor(private val usecase: UserInteractor) {
     fun show(context: Context): UserPresenter {

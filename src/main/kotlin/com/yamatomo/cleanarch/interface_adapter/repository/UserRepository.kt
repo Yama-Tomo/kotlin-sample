@@ -1,8 +1,8 @@
-package com.yamatomo.cleanarch.interface_adpter.repository
+package com.yamatomo.cleanarch.interface_adapter.repository
 
 import com.yamatomo.cleanarch.domain.User as UserEntity
 import com.yamatomo.cleanarch.usecase.UserRepository as UserRepositoryInterface
-import com.yamatomo.cleanarch.interface_adpter.repository.data_gateway.User as DataGateway
+import com.yamatomo.cleanarch.interface_adapter.repository.data_gateway.User as DataGateway
 
 class UserRepository constructor(private val gateway: DataGateway): UserRepositoryInterface {
     override fun findById(id: Long): UserEntity? {

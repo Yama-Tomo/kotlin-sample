@@ -1,8 +1,8 @@
-package com.yamatomo.cleanarch.interface_adpter.repository
+package com.yamatomo.cleanarch.interface_adapter.repository
 
 import com.yamatomo.cleanarch.domain.Branch as BranchEntity
 import com.yamatomo.cleanarch.usecase.BranchRepository as BranchRepositoryInterface
-import com.yamatomo.cleanarch.interface_adpter.repository.data_gateway.Branch as DataGateway
+import com.yamatomo.cleanarch.interface_adapter.repository.data_gateway.Branch as DataGateway
 
 class BranchRepository constructor(private val gateway: DataGateway): BranchRepositoryInterface {
     override fun findById(id: Long): BranchEntity? {

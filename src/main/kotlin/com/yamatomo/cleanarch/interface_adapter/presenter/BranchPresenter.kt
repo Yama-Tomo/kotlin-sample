@@ -1,4 +1,4 @@
-package com.yamatomo.cleanarch.interface_adpter.presenter
+package com.yamatomo.cleanarch.interface_adapter.presenter
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonIgnore;

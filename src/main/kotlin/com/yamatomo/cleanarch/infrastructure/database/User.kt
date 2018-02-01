@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 
 import com.yamatomo.cleanarch.domain.User as UserEntity
 import com.yamatomo.cleanarch.domain.Branch
-import com.yamatomo.cleanarch.interface_adpter.repository.data_gateway.User as DataGatewayInterface
+import com.yamatomo.cleanarch.interface_adapter.repository.data_gateway.User as DataGatewayInterface
 import com.yamatomo.cleanarch.infrastructure.database.jpa.UserRepository
 import com.yamatomo.cleanarch.infrastructure.database.jpa.User as InfraUserEntity
 

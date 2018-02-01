@@ -1,13 +1,13 @@
-package com.yamatomo.cleanarch.interface_adpter.controller
+package com.yamatomo.cleanarch.interface_adapter.controller
 
 import com.yamatomo.cleanarch.domain.Branch
 import com.yamatomo.cleanarch.usecase.exception.*
 import com.yamatomo.cleanarch.usecase.BranchInteractor
 import com.yamatomo.cleanarch.usecase.UserInteractor
 import com.yamatomo.cleanarch.usecase.context.Context
-import com.yamatomo.cleanarch.interface_adpter.presenter.BranchPresenter
-import com.yamatomo.cleanarch.interface_adpter.presenter.UserPresenter
-import com.yamatomo.cleanarch.interface_adpter.repository.UserRepository
+import com.yamatomo.cleanarch.interface_adapter.presenter.BranchPresenter
+import com.yamatomo.cleanarch.interface_adapter.presenter.UserPresenter
+import com.yamatomo.cleanarch.interface_adapter.repository.UserRepository
 
 class BranchController constructor(private val usecase: BranchInteractor) {
     fun show(context: Context): BranchPresenter {

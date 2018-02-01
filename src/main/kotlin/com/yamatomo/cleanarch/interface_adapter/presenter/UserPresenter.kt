@@ -1,11 +1,11 @@
-package com.yamatomo.cleanarch.interface_adpter.presenter
+package com.yamatomo.cleanarch.interface_adapter.presenter
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.yamatomo.cleanarch.domain.User
 import com.yamatomo.cleanarch.domain.Branch
-import com.yamatomo.cleanarch.interface_adpter.presenter.BranchPresenter
+import com.yamatomo.cleanarch.interface_adapter.presenter.BranchPresenter
 
 class UserPresenter @JsonIgnore constructor(private val user: User) {
     val id: Long
