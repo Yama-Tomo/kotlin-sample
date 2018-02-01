@@ -9,6 +9,7 @@ import com.yamatomo.cleanarch.domain.User
 import com.yamatomo.cleanarch.usecase.UserInteractor
 import com.yamatomo.cleanarch.usecase.context.Context
 import com.yamatomo.cleanarch.interface_adpter.controller.UserController
+import com.yamatomo.cleanarch.interface_adpter.presenter.UserPresenter
 import com.yamatomo.cleanarch.interface_adpter.repository.UserRepository
 import com.yamatomo.cleanarch.infrastructure.database.User as UserDataGateway
 
@@ -19,12 +20,12 @@ class Users {
     private lateinit var gateway: UserDataGateway
 
     @RequestMapping(method = arrayOf(RequestMethod.GET))
-    fun getUsers(@RequestParam requestParams: MultiValueMap<String, String?>): List<User> {
+    fun getUsers(@RequestParam requestParams: MultiValueMap<String, String?>): List<UserPresenter> {
         return UserController(UserInteractor(UserRepository(gateway))).lists()
     }
 
     @RequestMapping(value = "{id}", method = arrayOf(RequestMethod.GET))
-    fun get(@PathVariable("id") id: String, @RequestParam requestParams: MultiValueMap<String, String?>): User {
+    fun get(@PathVariable("id") id: String, @RequestParam requestParams: MultiValueMap<String, String?>): UserPresenter {
         requestParams.set("id", id)
         return UserController(UserInteractor(UserRepository(gateway))).show(Context(requestParams))
     }
@@ -37,7 +38,7 @@ class Users {
     }
 
     @RequestMapping(method = arrayOf(RequestMethod.POST))
-    fun post(@RequestParam requestParams: MultiValueMap<String, String?>): User {
+    fun post(@RequestParam requestParams: MultiValueMap<String, String?>): UserPresenter {
         return UserController(UserInteractor(UserRepository(gateway))).add(Context(requestParams))
     }
 

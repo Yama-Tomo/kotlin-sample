@@ -14,31 +14,32 @@ import com.yamatomo.cleanarch.domain.User
 import com.yamatomo.cleanarch.usecase.exception.*
 import com.yamatomo.cleanarch.usecase.UserInteractor
 import com.yamatomo.cleanarch.usecase.context.Context
+import com.yamatomo.cleanarch.interface_adpter.presenter.UserPresenter
 
 class UserController constructor(private val usecase: UserInteractor) {
-    fun show(context: Context): User {
+    fun show(context: Context): UserPresenter {
         val id = context.params.getFirst("id")
   
-        return usecase.userById(id?.toLongOrNull())
+		return UserPresenter(usecase.userById(id?.toLongOrNull()))
     }
 
-    fun lists(): List<User> {
-        return usecase.users()
+    fun lists(): List<UserPresenter> {
+        return usecase.users().map { UserPresenter(it) }
     }
 
-    fun add(context: Context): User {
-        val firstName = context.params.getFirst("first_name") as? String ?: ""
-        val lastName  = context.params.getFirst("last_name") as? String ?: ""
+    fun add(context: Context): UserPresenter {
+        val firstName = context.params.getFirst("first_name") ?: ""
+        val lastName  = context.params.getFirst("last_name")  ?: ""
 
-        return usecase.add(User(firstName, lastName))
+        return UserPresenter(usecase.add(User(firstName, lastName)))
     }
 
     fun modify(context: Context): User {
         val id        = context.params.getFirst("id")
-        val firstName = context.params.getFirst("first_name") as? String ?: ""
-        val lastName  = context.params.getFirst("last_name") as? String ?: ""
+        val firstName = context.params.getFirst("first_name") ?: ""
+        val lastName  = context.params.getFirst("last_name")  ?: ""
 
-        return usecase.modify(User(id?.toLongOrNull(), firstName, lastName))
+        return usecase.modify(User(id?.toLongOrNull(), firstName, lastName, listOf()))
     }
 
     fun remove(context: Context) {

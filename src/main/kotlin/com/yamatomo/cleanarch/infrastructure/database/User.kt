@@ -1,10 +1,14 @@
 package com.yamatomo.cleanarch.infrastructure.database
 
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
+import javax.persistence.NoResultException
 import org.springframework.stereotype.Component
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 
 import com.yamatomo.cleanarch.domain.User as UserEntity
+import com.yamatomo.cleanarch.domain.Branch
 import com.yamatomo.cleanarch.interface_adpter.repository.data_gateway.User as DataGatewayInterface
 import com.yamatomo.cleanarch.infrastructure.database.jpa.UserRepository
 import com.yamatomo.cleanarch.infrastructure.database.jpa.User as InfraUserEntity
@@ -13,26 +17,40 @@ import com.yamatomo.cleanarch.infrastructure.database.jpa.User as InfraUserEntit
 class User @Autowired constructor(
     @Qualifier("com.yamatomo.cleanarch.infrastructure.database.jpa.UserRepository") private val repo: UserRepository
 ): DataGatewayInterface {
-    override fun findById(id: Long): UserEntity? {
-        val user = repo.findById(id)
-        if (user != null) {
-            return UserEntity(user.id, user.firstName, user.lastName)
-        }
+    @PersistenceContext
+    private lateinit var em: EntityManager
 
-        return null
+    override fun findById(id: Long): UserEntity? {
+        try {
+            val user = em.createQuery("SELECT m FROM User m LEFT JOIN FETCH m.branches WHERE m.id = :id", InfraUserEntity::class.java)
+                         .setParameter("id", id)
+                         .getSingleResult()
+
+            return convertUserEntity(user)
+        } catch (e: NoResultException) {
+            return null
+        }
     }
 
     override fun findAll(): List<UserEntity> {
-        return repo.findAll().map { row -> UserEntity(row.id, row.firstName, row.lastName) }
+        // distinctをつけないと usersが重複してしまう http://d.hatena.ne.jp/taedium/20071222/p2
+        val users = em.createQuery("SELECT DISTINCT m FROM User m LEFT JOIN FETCH m.branches", InfraUserEntity::class.java)
+                      .getResultList() ?: return listOf()
+
+        return users.map { convertUserEntity(it) }
     }
 
     override fun save(user: UserEntity): UserEntity {
         val savedUser = repo.save(InfraUserEntity(user.id, user.firstName, user.lastName))
 
-		return UserEntity(savedUser.id, user.firstName, user.lastName)
+        return UserEntity(savedUser.id, user.firstName, user.lastName, user.branches)
     }  
 
     override fun remove(id: Long) {
-		repo.delete(id)
-	}
+        repo.delete(id)
+    }
+
+    private fun convertUserEntity(user: InfraUserEntity): UserEntity {
+        return UserEntity(user.id, user.firstName, user.lastName, user.branches.map { branch -> Branch(branch.id, branch.name) })
+    }
 }
