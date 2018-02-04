@@ -1,75 +1,68 @@
 package com.yamatomo.cleanarch.usecase
 
-import com.yamatomo.cleanarch.domain.User
 import com.yamatomo.cleanarch.domain.Branch
+import com.yamatomo.cleanarch.usecase.context.DiContainer
 import com.yamatomo.cleanarch.usecase.exception.*
-import com.yamatomo.cleanarch.usecase.BranchRepository
-import com.yamatomo.cleanarch.usecase.UserInteractor
 
-class BranchInteractor constructor(private val repos: BranchRepository) {
+class BranchInteractor constructor(private val container: DiContainer) {
     fun branchById(id: Long?): Branch {
         if (id == null) {
-            throw InvalidParamsException("invalid id parameter");
-        }
- 
-        val branch = repos.findById(id)
-        if (branch == null) {
-            throw DataNotFoundException("not found");
+            throw InvalidParamsException("invalid id parameter")
         }
 
-        return branch
+        return container.getBranchRepository().findById(id) ?: throw DataNotFoundException("not found")
     }
 
     fun branches(): List<Branch> {
-        return repos.findAll()
+        return container.getBranchRepository().findAll()
     }
 
     fun add(branch: Branch): Branch {
         // TODO: バリデーションの実装方法調査
         if (branch.name == "") {
-            throw InvalidParamsException("invalid parameters");
+            throw InvalidParamsException("invalid parameters")
         }
 
-        return repos.save(branch)
+        return container.getBranchRepository().save(branch)
     }
 
     fun modify(branch: Branch): Branch {
         // TODO: バリデーションの実装方法調査
         if (branch.id == null || branch.name == "") {
-            throw InvalidParamsException("invalid parameters");
+            throw InvalidParamsException("invalid parameters")
         }
 
         val branchModifiedBefore = branchById(branch.id)
-        val attributes = mutableMapOf<String, Any?>(
+        val attributes = mutableMapOf(
             "id"   to branchModifiedBefore.id,
             "name" to branchModifiedBefore.name
         )
-        if (branch.name != "") attributes.set("name", branch.name)
+        if (branch.name != "") attributes["name"] = branch.name
 
-        return repos.save(Branch(attributes))
+        return container.getBranchRepository().save(Branch(attributes))
     }
 
     fun remove(id: Long?) {
         if (id == null) {
-            throw InvalidParamsException("invalid id parameter");
+            throw InvalidParamsException("invalid id parameter")
         }
         branchById(id)
  
-        repos.remove(id)
+        container.getBranchRepository().remove(id)
     }
 
-    fun addUser(userId: Long?, branchId: Long?, userUseCase: UserInteractor) {
+    fun addUser(userId: Long?, branchId: Long?) {
         if (userId == null || branchId == null) {
-            throw InvalidParamsException("invalid id parameter");
+            throw InvalidParamsException("invalid id parameter")
         }
 
-        val user   = userUseCase.userById(userId)
+        container.getUserRepository().findById(userId) ?: throw DataNotFoundException("not found")
+
         val branch = branchById(branchId)
-
-        if (branch.users.stream().filter { it.id == userId }.findFirst().isPresent()) {
-            throw InvalidParamsException("Already branch subscribed");
+        if (branch.users.stream().filter { it.id == userId }.findFirst().isPresent) {
+            throw InvalidParamsException("Already branch subscribed")
         }
 
-        repos.addUser(userId, branchId)
+        container.getBranchRepository().addUser(userId, branchId)
     }
 }

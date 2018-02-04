@@ -21,21 +21,21 @@ class User @Autowired constructor(
     private lateinit var em: EntityManager
 
     override fun findById(id: Long): UserEntity? {
-        try {
+        return try {
             val user = em.createQuery("SELECT m FROM User m LEFT JOIN FETCH m.branches WHERE m.id = :id", InfraUserEntity::class.java)
-                         .setParameter("id", id)
-                         .getSingleResult()
+                    .setParameter("id", id)
+                    .singleResult
 
-            return convertUserEntity(user)
+            convertUserEntity(user)
         } catch (e: NoResultException) {
-            return null
+            null
         }
     }
 
     override fun findAll(): List<UserEntity> {
         // distinctをつけないと usersが重複してしまう http://d.hatena.ne.jp/taedium/20071222/p2
         val users = em.createQuery("SELECT DISTINCT m FROM User m LEFT JOIN FETCH m.branches", InfraUserEntity::class.java)
-                      .getResultList() ?: return listOf()
+                      .resultList ?: return listOf()
 
         return users.map { convertUserEntity(it) }
     }

@@ -7,40 +7,35 @@ package com.yamatomo.cleanarch.usecase
 **/
 
 import com.yamatomo.cleanarch.domain.User
+import com.yamatomo.cleanarch.usecase.context.DiContainer
 import com.yamatomo.cleanarch.usecase.exception.*
-import com.yamatomo.cleanarch.usecase.UserRepository
 
-class UserInteractor constructor(private val repos: UserRepository) {
+class UserInteractor constructor(private val container: DiContainer) {
     fun userById(id: Long?): User {
         if (id == null) {
-            throw InvalidParamsException("invalid id parameter");
-        }
- 
-        val user = repos.findById(id)
-        if (user == null) {
-            throw DataNotFoundException("not found");
+            throw InvalidParamsException("invalid id parameter")
         }
 
-        return user
+        return container.getUserRepository().findById(id) ?: throw DataNotFoundException("not found")
     }
 
     fun users(): List<User> {
-        return repos.findAll()
+        return container.getUserRepository().findAll()
     }
 
     fun add(user: User): User {
         // TODO: バリデーションの実装方法調査
         if (user.firstName == "" || user.lastName == "") {
-            throw InvalidParamsException("invalid parameters");
+            throw InvalidParamsException("invalid parameters")
         }
 
-        return repos.save(user)
+        return container.getUserRepository().save(user)
     }
 
     fun modify(user: User): User {
         // TODO: バリデーションの実装方法調査
         if (user.id == null || (user.firstName == "" && user.lastName == "")) {
-            throw InvalidParamsException("invalid parameters");
+            throw InvalidParamsException("invalid parameters")
         }
 
         val userModifiedBefore = userById(user.id)
@@ -49,18 +44,18 @@ class UserInteractor constructor(private val repos: UserRepository) {
             "firstName" to userModifiedBefore.firstName,
             "lastName"  to userModifiedBefore.lastName
         )
-        if (user.firstName != "") attributes.set("firstName", user.firstName)
-        if (user.lastName != "")  attributes.set("lastName", user.lastName)
+        if (user.firstName != "") attributes["firstName"] = user.firstName
+        if (user.lastName != "")  attributes["lastName"] = user.lastName
 
-        return repos.save(User(attributes))
+        return container.getUserRepository().save(User(attributes))
     }
 
     fun remove(id: Long?) {
         if (id == null) {
-            throw InvalidParamsException("invalid id parameter");
+            throw InvalidParamsException("invalid id parameter")
         }
         userById(id)
  
-        repos.remove(id)
+        container.getUserRepository().remove(id)
     }
 }

@@ -11,40 +11,44 @@ package com.yamatomo.cleanarch.interface_adapter.controller
 **/
 
 import com.yamatomo.cleanarch.domain.User
-import com.yamatomo.cleanarch.usecase.exception.*
 import com.yamatomo.cleanarch.usecase.UserInteractor
 import com.yamatomo.cleanarch.usecase.context.Context
 import com.yamatomo.cleanarch.interface_adapter.presenter.UserPresenter
 
-class UserController constructor(private val usecase: UserInteractor) {
-    fun show(context: Context): UserPresenter {
-        val id = context.params.getFirst("id")
+class UserController constructor(private val context: Context) {
+    fun show(): UserPresenter {
+        val id      = context.params.getFirst("id")
+        val useCase = UserInteractor(context.container)
   
-		return UserPresenter(usecase.userById(id?.toLongOrNull()))
+		return UserPresenter(useCase.userById(id?.toLongOrNull()))
     }
 
     fun lists(): List<UserPresenter> {
-        return usecase.users().map { UserPresenter(it) }
+        val useCase = UserInteractor(context.container)
+        return useCase.users().map { UserPresenter(it) }
     }
 
-    fun add(context: Context): UserPresenter {
+    fun add(): UserPresenter {
         val firstName = context.params.getFirst("first_name") ?: ""
         val lastName  = context.params.getFirst("last_name")  ?: ""
+        val useCase   = UserInteractor(context.container)
 
-        return UserPresenter(usecase.add(User(firstName, lastName)))
+        return UserPresenter(useCase.add(User(firstName, lastName)))
     }
 
-    fun modify(context: Context): User {
+    fun modify(): User {
         val id        = context.params.getFirst("id")
         val firstName = context.params.getFirst("first_name") ?: ""
         val lastName  = context.params.getFirst("last_name")  ?: ""
+        val useCase   = UserInteractor(context.container)
 
-        return usecase.modify(User(id?.toLongOrNull(), firstName, lastName, listOf()))
+        return useCase.modify(User(id?.toLongOrNull(), firstName, lastName, listOf()))
     }
 
-    fun remove(context: Context) {
-        val id = context.params.getFirst("id")
-  
-        return usecase.remove(id?.toLongOrNull())
+    fun remove() {
+        val id      = context.params.getFirst("id")
+        val useCase = UserInteractor(context.container)
+
+        return useCase.remove(id?.toLongOrNull())
     }
 }

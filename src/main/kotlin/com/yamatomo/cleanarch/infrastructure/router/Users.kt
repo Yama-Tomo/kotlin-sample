@@ -1,51 +1,51 @@
 package com.yamatomo.cleanarch.router
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
-import org.springframework.beans.factory.annotation.Autowired
 
-import com.yamatomo.cleanarch.domain.User
-import com.yamatomo.cleanarch.usecase.UserInteractor
 import com.yamatomo.cleanarch.usecase.context.Context
 import com.yamatomo.cleanarch.interface_adapter.controller.UserController
 import com.yamatomo.cleanarch.interface_adapter.presenter.UserPresenter
-import com.yamatomo.cleanarch.interface_adapter.repository.UserRepository
+import com.yamatomo.cleanarch.infrastructure.DiContainerImpl
 import com.yamatomo.cleanarch.infrastructure.database.User as UserDataGateway
 
 @RestController
-@RequestMapping(value = "users")
-class Users {
+@RequestMapping(value = ["users"])
+class Users @Autowired constructor(
+    private val container: DiContainerImpl
+) {
     @Autowired
     private lateinit var gateway: UserDataGateway
 
-    @RequestMapping(method = arrayOf(RequestMethod.GET))
+    @RequestMapping(method = [(RequestMethod.GET)])
     fun getUsers(@RequestParam requestParams: MultiValueMap<String, String?>): List<UserPresenter> {
-        return UserController(UserInteractor(UserRepository(gateway))).lists()
+        return UserController(Context(requestParams, container)).lists()
     }
 
-    @RequestMapping(value = "{id}", method = arrayOf(RequestMethod.GET))
+    @RequestMapping(value = ["{id}"], method = [(RequestMethod.GET)])
     fun get(@PathVariable("id") id: String, @RequestParam requestParams: MultiValueMap<String, String?>): UserPresenter {
         requestParams.set("id", id)
-        return UserController(UserInteractor(UserRepository(gateway))).show(Context(requestParams))
+        return UserController(Context(requestParams, container)).show()
     }
 
-    @RequestMapping(value = "{id}", method = arrayOf(RequestMethod.PUT))
+    @RequestMapping(value = ["{id}"], method = [(RequestMethod.PUT)])
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun put(@PathVariable("id") id: String, @RequestParam requestParams: MultiValueMap<String, String?>) {
         requestParams.set("id", id)
-        UserController(UserInteractor(UserRepository(gateway))).modify(Context(requestParams))
+        UserController(Context(requestParams, container)).modify()
     }
 
-    @RequestMapping(method = arrayOf(RequestMethod.POST))
+    @RequestMapping(method = [(RequestMethod.POST)])
     fun post(@RequestParam requestParams: MultiValueMap<String, String?>): UserPresenter {
-        return UserController(UserInteractor(UserRepository(gateway))).add(Context(requestParams))
+        return UserController(Context(requestParams, container)).add()
     }
 
-    @RequestMapping(value = "{id}", method = arrayOf(RequestMethod.DELETE))
+    @RequestMapping(value = ["{id}"], method = [(RequestMethod.DELETE)])
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun delete(@PathVariable("id") id: String, @RequestParam requestParams: MultiValueMap<String, String?>) {
         requestParams.set("id", id)
-        UserController(UserInteractor(UserRepository(gateway))).remove(Context(requestParams))
+        UserController(Context(requestParams, container)).remove()
     }
 }

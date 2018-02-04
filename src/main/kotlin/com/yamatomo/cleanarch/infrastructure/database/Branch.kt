@@ -24,20 +24,20 @@ class Branch @Autowired constructor(
     private lateinit var em: EntityManager
 
     override fun findById(id: Long): BranchEntity? {
-        try {
+        return try {
             val branch = em.createQuery("SELECT b FROM Branch b LEFT JOIN FETCH b.users WHERE b.id = :id", InfraBranchEntity::class.java)
-                         .setParameter("id", id)
-                         .getSingleResult()
+                    .setParameter("id", id)
+                    .singleResult
 
-            return convertBranchEntity(branch)
+            convertBranchEntity(branch)
         } catch (e: NoResultException) {
-            return null
+            null
         }
     }
 
     override fun findAll(): List<BranchEntity> {
         val branches = em.createQuery("SELECT DISTINCT b FROM Branch b LEFT JOIN FETCH b.users", InfraBranchEntity::class.java)
-                         .getResultList() ?: return listOf()
+                         .resultList ?: return listOf()
 
         return branches.map { convertBranchEntity(it) }
     }

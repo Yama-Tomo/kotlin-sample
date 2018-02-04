@@ -1,50 +1,54 @@
 package com.yamatomo.cleanarch.interface_adapter.controller
 
 import com.yamatomo.cleanarch.domain.Branch
-import com.yamatomo.cleanarch.usecase.exception.*
 import com.yamatomo.cleanarch.usecase.BranchInteractor
 import com.yamatomo.cleanarch.usecase.UserInteractor
 import com.yamatomo.cleanarch.usecase.context.Context
 import com.yamatomo.cleanarch.interface_adapter.presenter.BranchPresenter
 import com.yamatomo.cleanarch.interface_adapter.presenter.UserPresenter
-import com.yamatomo.cleanarch.interface_adapter.repository.UserRepository
 
-class BranchController constructor(private val usecase: BranchInteractor) {
-    fun show(context: Context): BranchPresenter {
-        val id = context.params.getFirst("id")
+class BranchController constructor(private val context: Context) {
+    fun show(): BranchPresenter {
+        val id      = context.params.getFirst("id")
+        val useCase = BranchInteractor(context.container)
   
-		return BranchPresenter(usecase.branchById(id?.toLongOrNull()))
+		return BranchPresenter(useCase.branchById(id?.toLongOrNull()))
     }
 
     fun lists(): List<BranchPresenter> {
-        return usecase.branches().map { BranchPresenter(it) }
+        val useCase = BranchInteractor(context.container)
+        return useCase.branches().map { BranchPresenter(it) }
     }
 
-    fun add(context: Context): BranchPresenter {
-        val name = context.params.getFirst("name") ?: ""
+    fun add(): BranchPresenter {
+        val name    = context.params.getFirst("name") ?: ""
+        val useCase = BranchInteractor(context.container)
 
-        return BranchPresenter(usecase.add(Branch(name)))
+        return BranchPresenter(useCase.add(Branch(name)))
     }
 
-    fun modify(context: Context): Branch {
-        val id   = context.params.getFirst("id")
-        val name = context.params.getFirst("name") ?: ""
+    fun modify(): Branch {
+        val id      = context.params.getFirst("id")
+        val name    = context.params.getFirst("name") ?: ""
+        val useCase = BranchInteractor(context.container)
 
-        return usecase.modify(Branch(id?.toLongOrNull(), name))
+        return useCase.modify(Branch(id?.toLongOrNull(), name))
     }
 
-    fun remove(context: Context) {
-        val id = context.params.getFirst("id")
-  
-        return usecase.remove(id?.toLongOrNull())
+    fun remove() {
+        val id      = context.params.getFirst("id")
+        val useCase = BranchInteractor(context.container)
+
+        return useCase.remove(id?.toLongOrNull())
     }
 
-    fun addUser(context: Context, userUseCase: UserInteractor): UserPresenter {
+    fun addUser(): UserPresenter {
         val branchId = context.params.getFirst("id")
         val userId   = context.params.getFirst("user_id")
+        val useCase  = BranchInteractor(context.container)
 
-        usecase.addUser(userId?.toLong(), branchId?.toLong(), userUseCase)
+        useCase.addUser(userId?.toLong(), branchId?.toLong())
 
-        return UserPresenter(userUseCase.userById(userId?.toLongOrNull()))
+        return UserPresenter(UserInteractor(context.container).userById(userId?.toLongOrNull()))
     }
 }
