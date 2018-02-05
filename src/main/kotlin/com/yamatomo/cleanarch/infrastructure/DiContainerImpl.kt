@@ -1,24 +1,25 @@
 package com.yamatomo.cleanarch.infrastructure
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 
 import com.yamatomo.cleanarch.usecase.context.DiContainer
-import com.yamatomo.cleanarch.interface_adapter.repository.UserRepository
-import com.yamatomo.cleanarch.interface_adapter.repository.BranchRepository
-import com.yamatomo.cleanarch.infrastructure.database.User as UserDataGateway
-import com.yamatomo.cleanarch.infrastructure.database.Branch as BranchDataGateway
+import com.yamatomo.cleanarch.usecase.UserRepository
+import com.yamatomo.cleanarch.usecase.BranchRepository
+import com.yamatomo.cleanarch.infrastructure.database.UserRepositoryImpl
+import com.yamatomo.cleanarch.infrastructure.database.BranchRepositoryImpl
 
 @Component
 class DiContainerImpl @Autowired constructor(
-    private val branchDataGateway: BranchDataGateway,
-    private val userDataGateway: UserDataGateway
+    @Qualifier("BranchRepositoryImpl") private val branchRepository: BranchRepositoryImpl,
+    @Qualifier("UserRepositoryImpl") private val userRepository: UserRepositoryImpl
 ): DiContainer {
     override fun getBranchRepository(): BranchRepository {
-        return BranchRepository(branchDataGateway)
+        return branchRepository
     }
 
     override fun getUserRepository(): UserRepository {
-        return UserRepository(userDataGateway)
+        return userRepository
     }
 }

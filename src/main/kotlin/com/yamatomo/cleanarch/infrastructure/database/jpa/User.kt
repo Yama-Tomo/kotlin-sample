@@ -7,8 +7,6 @@ import javax.persistence.GeneratedValue
 import javax.persistence.Id
 import javax.persistence.ManyToMany
 
-import com.yamatomo.cleanarch.infrastructure.database.jpa.Branch
-
 @Entity
 @Table(name="users")
 data class User(
@@ -18,6 +16,7 @@ data class User(
     val firstName: String,
     @Column(name = "last_name")
     val lastName: String
+    // TODO: 日付をPrePersist, PreUpdateを利用して記録する
 ) {
 	@ManyToMany(mappedBy = "users")
 	val branches: List<Branch> = listOf()

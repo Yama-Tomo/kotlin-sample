@@ -7,45 +7,45 @@ import org.springframework.stereotype.Component
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 
-import com.yamatomo.cleanarch.domain.Branch as BranchEntity
+import com.yamatomo.cleanarch.domain.Branch
 import com.yamatomo.cleanarch.domain.User
-import com.yamatomo.cleanarch.interface_adapter.repository.data_gateway.Branch as DataGatewayInterface
-import com.yamatomo.cleanarch.infrastructure.database.jpa.BranchRepository
-import com.yamatomo.cleanarch.infrastructure.database.jpa.UserBranchRepository
+import com.yamatomo.cleanarch.usecase.BranchRepository
+import com.yamatomo.cleanarch.infrastructure.database.jpa.BranchRepository as InfraBranchRepository
+import com.yamatomo.cleanarch.infrastructure.database.jpa.UserBranchRepository as InfraUserBranchRepository
 import com.yamatomo.cleanarch.infrastructure.database.jpa.Branch as InfraBranchEntity
 import com.yamatomo.cleanarch.infrastructure.database.jpa.UserBranch as InfraUserBranchEntity
 
-@Component
-class Branch @Autowired constructor(
-    @Qualifier("com.yamatomo.cleanarch.infrastructure.database.jpa.BranchRepository") private val branchRepo: BranchRepository,
-    @Qualifier("com.yamatomo.cleanarch.infrastructure.database.jpa.UserBranchRepository") private val userBranchRepo: UserBranchRepository
-): DataGatewayInterface {
+@Component("BranchRepositoryImpl")
+class BranchRepositoryImpl @Autowired constructor(
+    @Qualifier("com.yamatomo.cleanarch.infrastructure.database.jpa.BranchRepository") private val branchRepo: InfraBranchRepository,
+    @Qualifier("com.yamatomo.cleanarch.infrastructure.database.jpa.UserBranchRepository") private val userBranchRepo: InfraUserBranchRepository
+): BranchRepository {
     @PersistenceContext
     private lateinit var em: EntityManager
 
-    override fun findById(id: Long): BranchEntity? {
+    override fun findById(id: Long): Branch? {
         return try {
             val branch = em.createQuery("SELECT b FROM Branch b LEFT JOIN FETCH b.users WHERE b.id = :id", InfraBranchEntity::class.java)
                     .setParameter("id", id)
                     .singleResult
 
-            convertBranchEntity(branch)
+            convertBranch(branch)
         } catch (e: NoResultException) {
             null
         }
     }
 
-    override fun findAll(): List<BranchEntity> {
+    override fun findAll(): List<Branch> {
         val branches = em.createQuery("SELECT DISTINCT b FROM Branch b LEFT JOIN FETCH b.users", InfraBranchEntity::class.java)
                          .resultList ?: return listOf()
 
-        return branches.map { convertBranchEntity(it) }
+        return branches.map { convertBranch(it) }
     }
 
-    override fun save(branch: BranchEntity): BranchEntity {
+    override fun save(branch: Branch): Branch {
         val savedBranch = branchRepo.save(InfraBranchEntity(branch.id, branch.name))
 
-        return BranchEntity(savedBranch.id, branch.name)
+        return Branch(savedBranch.id, branch.name)
     }  
 
     override fun remove(id: Long) {
@@ -56,7 +56,7 @@ class Branch @Autowired constructor(
 		userBranchRepo.save(InfraUserBranchEntity(null, userId, branchId))
     }
 
-    private fun convertBranchEntity(branch: InfraBranchEntity): BranchEntity {
-        return BranchEntity(branch.id, branch.name, branch.users.map { User(it.id, it.firstName, it.lastName) })
+    private fun convertBranch(branch: InfraBranchEntity): Branch {
+        return Branch(branch.id, branch.name, branch.users.map { User(it.id, it.firstName, it.lastName) })
     }
 }

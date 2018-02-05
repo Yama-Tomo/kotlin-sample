@@ -15,6 +15,5 @@ data class UserBranch(
     val userId: Long,
     @Column(name = "branch_id")
     val branchId: Long
-) {
-}
+)
 

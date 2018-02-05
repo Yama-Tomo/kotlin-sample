@@ -9,16 +9,12 @@ import com.yamatomo.cleanarch.usecase.context.Context
 import com.yamatomo.cleanarch.interface_adapter.controller.UserController
 import com.yamatomo.cleanarch.interface_adapter.presenter.UserPresenter
 import com.yamatomo.cleanarch.infrastructure.DiContainerImpl
-import com.yamatomo.cleanarch.infrastructure.database.User as UserDataGateway
 
 @RestController
 @RequestMapping(value = ["users"])
 class Users @Autowired constructor(
     private val container: DiContainerImpl
 ) {
-    @Autowired
-    private lateinit var gateway: UserDataGateway
-
     @RequestMapping(method = [(RequestMethod.GET)])
     fun getUsers(@RequestParam requestParams: MultiValueMap<String, String?>): List<UserPresenter> {
         return UserController(Context(requestParams, container)).lists()
